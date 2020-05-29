@@ -32,6 +32,8 @@
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Meta predicados.
 
+:- dynamic paragem/11
+
 :- dynamic adjudicante/4.
 :- dynamic adjudicataria/4.
 :- dynamic contrato/10.
@@ -525,7 +527,7 @@ somaDentroPrazo([contrato(Id,IdA,IdAda,Tipo,Proc,Desc,Custo,Prazo,Local,IdData)|
     somaDentroPrazo(T,P,G),
     Prazo > P,
     R is G.
-    
+
 soma([], R) :- R.
 soma([contrato(Id,IdA,IdAda,Tipo,Proc,Desc,Custo,Prazo,Local,IdData)|T], R) :-
     R = R + Custo,
