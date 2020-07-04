@@ -28,8 +28,7 @@ for sheet in workbook.sheets():
     arrayadmin.pop(0)
     arraycapital.pop(0)
     for x in range(281):
-        print (f'cidade({str(arrayid[x]):s}, {str(arraycity[x]):s}, {str(arraylat[x]):s}, {str(arraylng[x]):s}, {str(arrayadmin[x]):s}, {str(arraycapital[x]):s}).'.replace("'", ""))
-    array = []
+        print (f'cidade({str(arrayid[x]):s}, \"{str(arraycity[x]):s}\", {str(arraylat[x]):s}, {str(arraylng[x]):s}, \"{str(arrayadmin[x]):s}\", \"{str(arraycapital[x]):s}\").'.replace("'", ""))
 
 sys.stdout = orig_stdout
 f.close()
