@@ -15,7 +15,7 @@ arraycapital = []
 workbook = xlrd.open_workbook('cidades.xlsx')
 for sheet in workbook.sheets():
     for column in range(sheet.nrows):
-        arrayid.append(sheet.cell_value(column, 0))
+        arrayid.append(str(sheet.cell_value(column, 0)))
         arraycity.append(sheet.cell_value(column, 1))
         arraylat.append(sheet.cell_value(column, 2))
         arraylng.append(sheet.cell_value(column, 3))
@@ -41,7 +41,7 @@ arraylig = []
 for x in range(281):
     for y in range(281):
         dist = math.sqrt((arraylat[x] - arraylat[y])**2 + (arraylng[x] - arraylng[y])**2) * 100
-        if dist <= 20 and arraycity[x] != arraycity[y]:
+        if dist <= 105 and arraycity[x] != arraycity[y]:
             print(f'ligacao({str(arrayid[x]):s}, \'{str(arraycity[x]):s}\', {str(arrayid[y]):s}, \'{str(arraycity[y]):s}\', {str(dist):s}).')
 
 sys.stdout = orig_stdout
