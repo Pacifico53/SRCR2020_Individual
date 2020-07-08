@@ -2,7 +2,7 @@
 % SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
-% Programac�o em logica 
+% Programac�o em logica
 % Resolu��o de problemas de pesquisa
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
@@ -2357,7 +2357,7 @@ adjacente(895,897,776).
 adjacente(897,681,776).
 
 
-%---------------------------------pesquisa em profundidade primeiro 
+%---------------------------------pesquisa em profundidade primeiro
 
 
 
@@ -2370,16 +2370,16 @@ profundidadeprimeiro(Dst, Dst, [Caminho]).
 profundidadeprimeiro(Nodo, Dst, [ProxNodo|Caminho]) :-
 	adjacente(Nodo, ProxNodo,_),
 	profundidadeprimeiro(ProxNodo, Dst, Caminho).
-	
-	
-%---------------------------------filtra operadoras 
-	
+
+
+%---------------------------------filtra operadoras
+
 resolve_operadoras(Nodo, Dst,L, [Nodo|Caminho]) :-
 	operadoras(Nodo, Dst, L, Caminho).
-	
+
 operadoras(Dst, Dst, B, [Caminho]) :- findall((O),paragem(Dst,_,_,_,_,_,O,_,_,_,_),L),
 										 conf_list(B,L).
-													
+
 operadoras(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 	adjacente(Nodo, ProxNodo,_),
 	findall((O),paragem(Nodo,_,_,_,_,_,O,_,_,_,_),L),
@@ -2388,20 +2388,20 @@ operadoras(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 
 
 %---------------------------------pesquisa sem operadoras
-	
+
 resolve_sem_operadoras(Nodo, Dst,L, [Nodo|Caminho]) :-
 	sem_operadoras(Nodo, Dst, L, Caminho).
-	
+
 sem_operadoras(Dst, Dst, B, [Dst|Caminho]) :- findall((O),paragem(Dst,_,_,_,_,_,O,_,_,_,_),L),
 										 nao(conf_list(B,L)).
-													
+
 sem_operadoras(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 	adjacente(Nodo, ProxNodo,_),
 	findall((O),paragem(Nodo,_,_,_,_,_,O,_,_,_,_),L),
 	nao(conf_list(B,L)),
 	sem_operadoras(ProxNodo, Dst, B, Caminho).
-	
-	
+
+
 %---------------------------------pesquisa com paragem com maior numero de carreiras
 
 resolve_maior(Nodo, Dst, [Nodo|Caminho], M) :-
@@ -2417,7 +2417,7 @@ maior(Nodo, Dst, [ProxNodo|Caminho],P) :-
 	comp(L,N),
 	N>=M,
 	P is N.
-	
+
 maior(Nodo, Dst, [ProxNodo|Caminho],P) :-
 	adjacente(Nodo, ProxNodo,_),
 	maior(ProxNodo, Dst, Caminho,M),
@@ -2441,11 +2441,11 @@ minimo([Px,X|L],(Px,X)) :- minimo(L,(Py,Y)), X=<Y.
 
 resolve_pub(Nodo, Dst,L, [Nodo|Caminho]) :-
 	pub(Nodo, Dst, L, Caminho).
-	
+
 pub(Dst, Dst, B, [Caminho]) :- findall((O),paragem(Dst,_,_,_,_,P,_,_,_,_,_),L),
 									pertence(B,L).
-								   
-													
+
+
 pub(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 	adjacente(Nodo, ProxNodo,_),
 	findall((O),paragem(Nodo,_,_,_,_,P,_,_,_,_,_),L),
@@ -2457,11 +2457,11 @@ pub(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 
 resolve_abrigo(Nodo, Dst,L, [Nodo|Caminho]) :-
 	abrigo(Nodo, Dst, L, Caminho).
-	
+
 abrigo(Dst, Dst, B, [Caminho]) :- findall((A),paragem(Dst,_,_,_,A,_,_,_,_,_,_),L),
 									nao(pertence(B,L)).
-								   
-													
+
+
 abrigo(Nodo, Dst, B, [ProxNodo|Caminho]) :-
 	adjacente(Nodo, ProxNodo,_),
 	findall((A),paragem(Nodo,_,_,_,A,_,_,_,_,_,_),L),
