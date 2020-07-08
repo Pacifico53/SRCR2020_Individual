@@ -43,117 +43,48 @@ filtra_cidades(Inicio, Final, Filter, Visitados, [Inicio|Nodos]) :-
 
 %---------------------------------Exclui cidades
 
-% filtra_cidades(Inicio, Final, Filter, Path) :-
-%     filtra_cidades(Inicio, Final, Filter, [], Path).
-%
-% filtra_cidades(Inicio, Inicio,_ ,_ , [Inicio]).
-% filtra_cidades(Inicio, Final, Filter, Visitados, [Inicio|Nodos]) :-
-%     \+ member(Inicio, Visitados),
-%     Inicio \== Final,
-%     ligacao(Inicio, Nodo, _),
-%     nao(cidade(Nodo,_,_,_,_,Filter)),
-%     filtra_cidades(Nodo, Final, Filter, [Inicio|Visitados], Nodos).
+filtro_excluir(Inicio, Final,L, [Inicio|Path]) :-
+    aux_excluir(Inicio, Final, L, Path).
 
-filtro_excluir(Nodo, Dst,L, [Nodo|Caminho]) :-
-    aux_excluir(Nodo, Dst, L, Caminho).
+aux_excluir(Final, Final, B, [Final|_]) :- findall((C),cidade(Dst,_,_,_,_,C),L),
+                                        nao(conf_list(B,L)).
 
-aux_excluir(Dst, Dst, B, [Dst|_]) :- findall((O),cidade(Dst,_,_,_,_,O),L),
-                                         nao(conf_list(B,L)).
-
-aux_excluir(Nodo, Dst, B, [ProxNodo|Caminho]) :-
-    ligacao(Nodo,ProxNodo,_),
-    findall((O),cidade(Nodo,_,_,_,_,O),L),
+aux_excluir(Inicio, Final, B, [ProxNodo|Path]) :-
+    ligacao(Inicio,ProxNodo,_),
+    findall((C),cidade(Nodo,_,_,_,_,C),L),
     nao(conf_list(B,L)),
-    aux_excluir(ProxNodo, Dst, B, Caminho).
+    aux_excluir(ProxNodo, Final, B, Path).
 
-%---------------------------------Cidade com maior numero de ligacoes
-/*
-resolve_maior(Nodo, Dst, [Nodo|Caminho], M) :-
-    maior(Nodo, Dst, Caminho, M).
-
-
-maior(Dst, Dst,[_],0).
-
-maior(Nodo, Dst, [ProxNodo|Caminho],P) :-
-    ligacao(Nodo,ProxNodo,_),
-    maior(ProxNodo, Dst, Caminho,M),
-    findall((C),cidade(Nodo,_,_,_,_,_,_,C,_,_,_),L),
-    comp(L,N),
-    N>=M,
-    P is N.
-
-maior(Nodo, Dst, [ProxNodo|Caminho],P) :-
-    ligacao(Nodo,ProxNodo,_),
-    maior(ProxNodo, Dst, Caminho,M),
-    findall((C),cidade(Nodo,_,_,_,_,_,_,C,_,_,_),L),
-    comp(L,N),
-    M>N,
-    P is M.
-*/
 %---------------------------------Pesquisa com menor número de cidades percorridas
 
-all_trajectos(A,B,L) :- findall((S),trajecto(A,B,S),L).
-
-menos_cidades(A,B,L,Custo) :- findall((S,C),(trajecto(A,B,S), length(S,C)),L), minimo(L,(S,Custo)).
-
-minimo([(P,X)],(P,X)).
-minimo([_,X|L],(Py,Y)) :- minimo(L,(Py,Y)), X>Y.
-minimo([Px,X|L],(Px,X)) :- minimo(L,(_,Y)), X=<Y.
-
-prepend_length(P, [L,P]) :-
+calc_length(P, [L,P]) :-
     length(P,L).
 
-shortest_path(A,B,S) :-
+menos_cidades(A,B,S) :-
     findall(P, trajecto(A,B,P), Ps),
-    maplist(prepend_length, Ps, Ls),
+    maplist(calc_length, Ps, Ls),
     sort(Ls, [[_,S]|_]).
-
-
-
-%---------------------------------Pesquisa cidades minor
-
-filtra_minor(Nodo, Dst,L, [Nodo|Caminho]) :-
-    aux_minor(Nodo, Dst, L, Caminho).
-
-aux_minor(Dst, Dst, B, [Caminho]) :- findall((O),cidade(Dst,_,_,_,_,'minor'),L),
-                                    pertence(B,L).
-
-aux_minor(Nodo, Dst, B, [ProxNodo|Caminho]) :-
-    ligacao(Nodo,ProxNodo,_),
-    findall((O),cidade(Nodo,_,_,_,_,P,_,_,_,_,_),L),
-    pertence(B,L),
-    aux_minor(ProxNodo, Dst, B, Caminho).
 
 %---------------------------------Menor distancia
 
-% path_min(Inicio, Final, Path, Length) :-
-%     path_min(Inicio, Final, [], Path, Length).
-%
-% path_min(Inicio, Inicio, _, [Inicio], L).
-% path_min(Inicio, Final, Visitados, [Inicio|Nodos], L) :-
-%     \+ member(Inicio, Visitados),
-%     Inicio \== Final,
-%     ligacao(Inicio, Nodo, D),
-%     path_min(Nodo, Final, [Inicio|Visitados], Nodos, L1),
-%     L is D+L1.
-path_min(A,B,Path,Len) :-
-        travel(A,B,[A],Q,Len).
+path_min(A, B, Path, Length) :-
+        travel(A, B, [A], Q, Length).
 
-travel(A,B,P,[B|P],L) :-
-        ligacao(A,B,L).
-travel(A,B,Visited,Path,L) :-
-        ligacao(A,C,D),
+travel(A, B, P, [B|P], L) :-
+        ligacao(A, B, L).
+travel(A, B, Visited, Path, L) :-
+        ligacao(A, C, D),
         C \== B,
-        \+member(C,Visited),
-        travel(C,B,[C|Visited],Path,L1),
+        \+member(C, Visited),
+        travel(C, B, [C|Visited], Path, L1),
         L is D+L1.
 
-shortest(A,B,Path,Length) :-
-    setof([P,L],path_min(A,B,P,L),Set),
+shortest(A, B, Path, Length) :-
+    setof([P,L],path_min(A, B, P, L), Set),
     Set = [_|_],
-    minimal(Set,[Path,Length]).
+    minimal(Set, [Path,Length]).
 
-minimal([F|R],M) :-
+minimal([F|R], M) :-
     min(R,F,M).
 
 % minimal path
